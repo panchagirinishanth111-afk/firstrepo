@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Charity Connector Hub</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+    }
+
+    /* ----------------- HEADER ----------------- */
+    header {
+        background: #2e7d32;
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+
+    nav a {
+        color: white;
+        margin-left: 20px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    /* ----------------- HERO ----------------- */
+    .hero {
+        background: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1400&q=80') center/cover;
+        height: 350px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        text-shadow: 1px 1px 4px black;
+        flex-direction: column;
+    }
+
+    .hero input {
+        width: 50%;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+        margin-top: 15px;
+    }
+
+    /* ----------------- CHARITY GRID ----------------- */
+    .charity-section {
+        padding: 30px;
+    }
+
+    .charity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .charity-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .charity-card img {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    .charity-card button {
+        background: #2e7d32;
+        color: white;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+
+    /* ----------------- MODAL ----------------- */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 25px;
+        width: 350px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .donation-options button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        background: #eee;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+    /* ----------------- DASHBOARD ----------------- */
+    #dashboard {
+        display: none;
+        padding: 25px;
+    }
+
+    .dashboard-box {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1>Charity Connector Hub</h1>
+    <nav>
+        <a href="#" onclick="showHome()">Home</a>
+        <a href="#" onclick="showDashboard()">Dashboard</a>
+    </nav>
+</header>
+
+<!-- ----------------- HERO ----------------- -->
+<section id="home">
+    <div class="hero">
+        <h2>Connecting You With Causes That Matter</h2>
+        <input type="text" placeholder="Search for a charity..." />
+    </div>
+
+    <!-- ----------------- CHARITY CARDS ----------------- -->
+    <section class="charity-section">
+        <h2>Featured Charities</h2>
+        <div class="charity-grid">
+            <div class="charity-card">
+                <img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=800&q=60" />
+                <h3>Global Water Aid</h3>
+                <p>Providing clean drinking water to remote communities.</p>
+                <button onclick="openDonate('Global Water Aid')">Donate</button>
+            </div>
+
+            <div class="charity-card">
+                <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=60" />
+                <h3>Hope for Children</h3>
+                <p>Supporting education and nutrition programs for children.</p>
+                <button onclick="openDonate('Hope for Children')">Donate</button>
+            </div>
+
+            <div class="charity-card">
+                <img src="https://images.unsplash.com/photo-1518173946687-a4c889d70fb8?auto=format&fit=crop&w=800&q=60" />
+                <h3>Wildlife Rescue Fund</h3>
+                <p>Protecting endangered species and restoring habitats.</p>
+                <button onclick="openDonate('Wildlife Rescue Fund')">Donate</button>
+            </div>
+        </div>
+    </section>
+</section>
+
+<!-- ----------------- DONATION MODAL ----------------- -->
+<div class="modal" id="donationModal">
+    <div class="modal-content">
+        <h2 id="donationCharityName"></h2>
+        <p>Select a donation amount:</p>
+
+        <div class="donation-options">
+            <button onclick="selectAmount(10)">$10</button>
+            <button onclick="selectAmount(25)">$25</button>
+            <button onclick="selectAmount(50)">$50</button>
+            <button onclick="selectAmount(100)">$100</button>
+        </div>
+
+        <p>Or enter custom amount:</p>
+        <input id="customAmount" type="number" placeholder="Enter amount" />
+
+        <br><br>
+        <button onclick="confirmDonation()">Confirm Donation</button>
+        <br><br>
+        <button onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- ----------------- DASHBOARD ----------------- -->
+<div id="dashboard">
+    <h2>Your Dashboard</h2>
+
+    <div class="dashboard-box">
+        <h3>Donation History</h3>
+        <ul id="donationHistory"></ul>
+    </div>
+
+    <div class="dashboard-box">
+        <h3>Saved Charities</h3>
+        <p>(Feature placeholder)</p>
+    </div>
+</div>
+
+<script>
+let selectedCharity = "";
+let selectedAmount = 0;
+
+function openDonate(name) {
+    selectedCharity = name;
+    document.getElementById("donationCharityName").innerText = name;
+    document.getElementById("donationModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("donationModal").style.display = "none";
+}
+
+function selectAmount(amount) {
+    selectedAmount = amount;
+}
+
+function confirmDonation() {
+    const custom = document.getElementById("customAmount").value;
+    const finalAmount = custom ? Number(custom) : selectedAmount;
+
+    if (!finalAmount || finalAmount <= 0) {
+        alert("Please enter a valid amount");
+        return;
+    }
+
+    // Add to dashboard history
+    const li = document.createElement("li");
+    li.textContent = `${selectedCharity}: $${finalAmount}`;
+    document.getElementById("donationHistory").appendChild(li);
+
+    alert("Thank you for your donation!");
+    closeModal();
+}
+
+function showDashboard() {
+    document.getElementById("home").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+}
+
+function showHome() {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("home").style.display = "block";
+}
+</script>
+
+</body>
+</html>
