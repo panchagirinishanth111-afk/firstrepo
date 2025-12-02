@@ -6,259 +6,495 @@
 <title>Charity Connector Hub</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f7f7f7;
-    }
+body { margin:0; font-family:Arial, sans-serif; background:#f4f4f4; }
 
-    /* ----------------- HEADER ----------------- */
-    header {
-        background: #2e7d32;
-        color: white;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+/* Header */
+header {
+    background:#2e7d32; 
+    color:white; 
+    padding:15px 25px;
+    display:flex; 
+    justify-content:flex-start; 
+    align-items:center;
+    gap:15px;
+}
+header img { height:40px; opacity:0.9; }
+header nav { margin-left:auto; }
+header nav a { color:white; text-decoration:none; margin-left:20px; font-weight:bold; }
 
-    header h1 {
-        margin: 0;
-    }
+/* Pages */
+.page { display:none; padding:20px; }
 
-    nav a {
-        color: white;
-        margin-left: 20px;
-        text-decoration: none;
-        font-weight: bold;
-    }
+/* Hero */
+.hero {
+    background:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1500&q=60') center/cover;
+    padding:40px 20px; 
+    color:white; 
+    text-align:center;
+    text-shadow:1px 1px 5px rgba(0,0,0,0.7);
+}
+.hero input {
+    width:50%; padding:10px; border-radius:6px; border:none;
+}
 
-    /* ----------------- HERO ----------------- */
-    .hero {
-        background: url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=1400&q=80') center/cover;
-        height: 350px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        text-shadow: 1px 1px 4px black;
-        flex-direction: column;
-    }
+/* Charity Cards */
+.charity-grid {
+    display:grid; 
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px; 
+    margin-top:20px;
+}
+.charity-card {
+    position:relative;
+    background-size:cover;
+    background-position:center;
+    border-radius:12px;
+    overflow:hidden;
+    min-height:180px;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:15px;
+    font-weight:bold;
+    text-shadow:1px 1px 4px black;
+}
+.charity-card::before {
+    content:"";
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.45);
+    z-index:0;
+}
+.charity-card * { position:relative; z-index:1; }
 
-    .hero input {
-        width: 50%;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        font-size: 16px;
-        margin-top: 15px;
-    }
+/* Charity Background Classes */
+.bg-water {
+    background-image:url('https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=800&q=60');
+}
+.bg-children {
+    background-image:url('https://images.unsplash.com/photo-1509099836639-18ba1795216d?auto=format&fit=crop&w=800&q=60');
+}
+.bg-wildlife {
+    background-image:url('https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=800&q=60');
+}
+.bg-generic {
+    background-image:url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=60');
+}
 
-    /* ----------------- CHARITY GRID ----------------- */
-    .charity-section {
-        padding: 30px;
-    }
+.charity-card button {
+    width:100%; padding:10px; background:#2e7d32; border:none;
+    color:white; border-radius:6px; margin-top:10px; cursor:pointer;
+}
 
-    .charity-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 20px;
-    }
+/* Modal */
+.modal {
+    display:none; justify-content:center; align-items:center;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); z-index:1000;
+}
+.modal-content {
+    background:white; padding:25px; width:350px;
+    border-radius:10px; text-align:center; position:relative;
+}
+.modal-content input {
+    width:90%; padding:10px; margin:8px 0;
+    border-radius:6px; border:1px solid #bbb;
+}
+button.green {
+    width:100%; padding:10px; background:#2e7d32;
+    border:none; border-radius:6px; color:white; cursor:pointer;
+}
 
-    .charity-card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
+/* Footer */
+footer {
+    background:#333; color:white; text-align:center;
+    padding:15px; margin-top:40px;
+}
 
-    .charity-card img {
-        width: 100%;
-        border-radius: 8px;
-    }
-
-    .charity-card button {
-        background: #2e7d32;
-        color: white;
-        padding: 10px;
-        width: 100%;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 10px;
-        font-size: 16px;
-    }
-
-    /* ----------------- MODAL ----------------- */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 25px;
-        width: 350px;
-        border-radius: 10px;
-        text-align: center;
-    }
-
-    .donation-options button {
-        padding: 10px 20px;
-        margin: 5px;
-        border: 1px solid #ccc;
-        background: #eee;
-        cursor: pointer;
-        border-radius: 6px;
-    }
-
-    /* ----------------- DASHBOARD ----------------- */
-    #dashboard {
-        display: none;
-        padding: 25px;
-    }
-
-    .dashboard-box {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-    }
+/* Profile labels */
+label {
+    display:block;
+    font-weight:bold;
+    margin-top:10px;
+}
 </style>
-
 </head>
+
 <body>
 
 <header>
+    <img src="https://cdn-icons-png.flaticon.com/512/1048/1048953.png">
     <h1>Charity Connector Hub</h1>
+
     <nav>
-        <a href="#" onclick="showHome()">Home</a>
-        <a href="#" onclick="showDashboard()">Dashboard</a>
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('about')">About</a>
+        <a href="#" onclick="showPage('help')">Help</a>
+        <a href="#" onclick="showPage('dashboard')">Dashboard</a>
+        <a href="#" onclick="showPage('profile')">Profile</a>
+        <a href="#" id="adminLink" onclick="showPage('admin')" style="display:none;">Admin Panel</a>
+        <a id="loginLink" href="#" onclick="openLogin()">Login</a>
+        <a id="logoutLink" href="#" onclick="logoutUser()" style="display:none;">Logout</a>
     </nav>
 </header>
 
-<!-- ----------------- HERO ----------------- -->
-<section id="home">
-    <div class="hero">
-        <h2>Connecting You With Causes That Matter</h2>
-        <input type="text" placeholder="Search for a charity..." />
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <h2>Login</h2>
+        <input id="loginEmail" type="email" placeholder="Email">
+        <input id="loginPass" type="password" placeholder="Password">
+        <button class="green" onclick="loginUser()">Login</button>
+        <p>No account? <a href="#" onclick="openSignup()">Sign Up</a></p>
+        <p id="loginError" style="color:red; display:none;">Incorrect email or password.</p>
     </div>
+</div>
 
-    <!-- ----------------- CHARITY CARDS ----------------- -->
-    <section class="charity-section">
-        <h2>Featured Charities</h2>
-        <div class="charity-grid">
-            <div class="charity-card">
-                <img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?auto=format&fit=crop&w=800&q=60" />
-                <h3>Global Water Aid</h3>
-                <p>Providing clean drinking water to remote communities.</p>
-                <button onclick="openDonate('Global Water Aid')">Donate</button>
-            </div>
+<!-- SIGNUP MODAL -->
+<div class="modal" id="signupModal">
+    <div class="modal-content">
+        <span onclick="closeSignup()" style="position:absolute; top:10px; right:15px; cursor:pointer;">✖</span>
 
-            <div class="charity-card">
-                <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=60" />
-                <h3>Hope for Children</h3>
-                <p>Supporting education and nutrition programs for children.</p>
-                <button onclick="openDonate('Hope for Children')">Donate</button>
-            </div>
+        <h2>Create Account</h2>
 
-            <div class="charity-card">
-                <img src="https://images.unsplash.com/photo-1518173946687-a4c889d70fb8?auto=format&fit=crop&w=800&q=60" />
-                <h3>Wildlife Rescue Fund</h3>
-                <p>Protecting endangered species and restoring habitats.</p>
-                <button onclick="openDonate('Wildlife Rescue Fund')">Donate</button>
-            </div>
-        </div>
-    </section>
-</section>
+        <input id="signupName" type="text" placeholder="Full Name">
+        <input id="signupEmail" type="email" placeholder="Email">
+        <input id="signupPass" type="password" placeholder="Password">
 
-<!-- ----------------- DONATION MODAL ----------------- -->
+        <p style="font-size:13px; text-align:left;">
+            <strong>Password Requirements:</strong><br>
+            • Minimum 8 characters<br>
+            • At least 1 uppercase letter<br>
+            • At least 1 lowercase letter<br>
+            • At least 1 number<br>
+            • At least 1 special character<br>
+        </p>
+
+        <button class="green" onclick="signupUser()">Create Account</button>
+    </div>
+</div>
+
+<!-- DONATION MODAL -->
 <div class="modal" id="donationModal">
     <div class="modal-content">
-        <h2 id="donationCharityName"></h2>
-        <p>Select a donation amount:</p>
+        <h2 id="donateCharityName"></h2>
 
-        <div class="donation-options">
-            <button onclick="selectAmount(10)">$10</button>
-            <button onclick="selectAmount(25)">$25</button>
-            <button onclick="selectAmount(50)">$50</button>
-            <button onclick="selectAmount(100)">$100</button>
-        </div>
+        <h3>Personal Details</h3>
+        <input id="donorName" type="text">
+        <input id="donorEmail" type="email">
 
-        <p>Or enter custom amount:</p>
-        <input id="customAmount" type="number" placeholder="Enter amount" />
+        <h3>Suggested Amounts</h3>
+        <label><input type="radio" name="amt" onclick="setApproxAmount(10)"> $10 – Helps 1 child</label><br>
+        <label><input type="radio" name="amt" onclick="setApproxAmount(25)"> $25 – 1 week of clean water</label><br>
+        <label><input type="radio" name="amt" onclick="setApproxAmount(50)"> $50 – Protects 1 animal</label><br>
 
-        <br><br>
-        <button onclick="confirmDonation()">Confirm Donation</button>
-        <br><br>
-        <button onclick="closeModal()">Cancel</button>
+        <h3>Or Enter Custom Amount</h3>
+        <input id="donateAmount" type="number" placeholder="Amount">
+
+        <button class="green" onclick="openPayment()">Proceed to Payment</button>
     </div>
 </div>
 
-<!-- ----------------- DASHBOARD ----------------- -->
-<div id="dashboard">
-    <h2>Your Dashboard</h2>
+<!-- PAYMENT MODAL -->
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <h2>Payment Details</h2>
 
-    <div class="dashboard-box">
-        <h3>Donation History</h3>
-        <ul id="donationHistory"></ul>
-    </div>
+        <input id="cardNumber" type="text" placeholder="Card Number">
+        <input id="cardExpiry" type="text" placeholder="MM/YY">
+        <input id="cardCVV" type="text" placeholder="CVV">
 
-    <div class="dashboard-box">
-        <h3>Saved Charities</h3>
-        <p>(Feature placeholder)</p>
+        <button class="green" onclick="completePayment()">Complete Payment</button>
     </div>
 </div>
+
+<!-- HOME PAGE -->
+<div id="home" class="page">
+    <div class="hero">
+        <h2>Discover Meaningful Causes</h2>
+        <input id="searchInput" oninput="filterCharities()" placeholder="Search charities...">
+    </div>
+    <div id="charityGrid" class="charity-grid"></div>
+</div>
+
+<!-- ABOUT PAGE (UPDATED) -->
+<div id="about" class="page">
+    <h2>About Charity Connector Hub</h2>
+    <p>
+        Charity Connector Hub is a centralized platform designed to connect generous donors
+        with impactful global charities. Our mission is to simplify giving by providing a
+        transparent and user-friendly interface where anyone can explore causes and contribute 
+        to meaningful change.
+    </p>
+
+    <h3>What We Offer</h3>
+    <ul>
+        <li>A curated list of trusted charities across key sectors</li>
+        <li>Simple donation workflow with tracking history</li>
+        <li>Personalized donor profiles</li>
+        <li>Admin tools for charity managers</li>
+        <li>Clear approximate impact for donation amounts</li>
+    </ul>
+
+    <p>We believe that every donation—big or small—creates ripples of change.</p>
+</div>
+
+<!-- HELP PAGE (UPDATED) -->
+<div id="help" class="page">
+    <h2>Help & Support</h2>
+    <p>Need assistance? Here are some common solutions:</p>
+
+    <h3>🌐 Account Help</h3>
+    <ul>
+        <li>If you forget your password, simply create a new account (local storage system).</li>
+        <li>Ensure your email is typed correctly when logging in.</li>
+    </ul>
+
+    <h3>💳 Donation Help</h3>
+    <ul>
+        <li>Select a charity and choose a suggested amount or enter your own.</li>
+        <li>Fill the dummy payment form to simulate transaction completion.</li>
+        <li>Your donation will appear in the Dashboard after payment.</li>
+    </ul>
+
+    <h3>🛠 Technical Issues</h3>
+    <ul>
+        <li>If pages don’t switch, refresh the browser.</li>
+        <li>Ensure localStorage is enabled in your browser settings.</li>
+    </ul>
+
+    <p>If you need further help, contact: <strong>support@charityhub.demo</strong></p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page">
+    <h2>Your Donations</h2>
+    <ul id="donationHistory"></ul>
+</div>
+
+<!-- PROFILE PAGE (UPDATED WITH LABELS) -->
+<div id="profile" class="page">
+    <h2>Edit Profile</h2>
+
+    <label for="profileName">Full Name</label>
+    <input id="profileName" type="text">
+
+    <label for="profileEmail">Email</label>
+    <input id="profileEmail" type="email">
+
+    <label for="profilePass">Change Password (optional)</label>
+    <input id="profilePass" type="password">
+
+    <button class="green" onclick="saveProfile()">Save Changes</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin" class="page">
+    <h2>Admin Panel</h2>
+
+    <input id="newCharityName" type="text" placeholder="Charity Name">
+    <input id="newCharityDesc" type="text" placeholder="Description">
+    <button class="green" onclick="addCharity()">Add Charity</button>
+
+    <h3>Existing Charities</h3>
+    <div id="adminCharityList"></div>
+</div>
+
+<footer>© 2025 Charity Connector Hub</footer>
 
 <script>
-let selectedCharity = "";
-let selectedAmount = 0;
 
-function openDonate(name) {
-    selectedCharity = name;
-    document.getElementById("donationCharityName").innerText = name;
-    document.getElementById("donationModal").style.display = "flex";
+/* STARTUP */
+window.onload = () => { loginModal.style.display="flex"; updateAuthUI(); };
+
+/* PAGE NAVIGATION */
+function showPage(id){
+    document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+    document.getElementById(id).style.display="block";
+    if(id==="profile") loadProfile();
+    if(id==="admin") loadAdminCharities();
 }
 
-function closeModal() {
-    document.getElementById("donationModal").style.display = "none";
-}
+/* AUTH */
+function openLogin(){ loginModal.style.display="flex"; signupModal.style.display="none"; }
 
-function selectAmount(amount) {
-    selectedAmount = amount;
-}
+function loginUser(){
+    const email = loginEmail.value.trim();
+    const pass = loginPass.value.trim();
 
-function confirmDonation() {
-    const custom = document.getElementById("customAmount").value;
-    const finalAmount = custom ? Number(custom) : selectedAmount;
-
-    if (!finalAmount || finalAmount <= 0) {
-        alert("Please enter a valid amount");
+    // Admin login
+    if(email==="admin@admin.com" && pass==="admin123"){
+        localStorage.setItem("loggedIn","true");
+        localStorage.setItem("role","admin");
+        loginModal.style.display="none";
+        updateAuthUI();
+        showPage("admin");
         return;
     }
 
-    // Add to dashboard history
-    const li = document.createElement("li");
-    li.textContent = `${selectedCharity}: $${finalAmount}`;
-    document.getElementById("donationHistory").appendChild(li);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if(!user || user.email!==email || user.pass!==pass){
+        loginError.style.display="block";
+        return;
+    }
 
-    alert("Thank you for your donation!");
-    closeModal();
+    localStorage.setItem("loggedIn","true");
+    localStorage.setItem("role","user");
+    loginModal.style.display="none";
+    updateAuthUI();
+    showPage("home");
 }
 
-function showDashboard() {
-    document.getElementById("home").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
+function openSignup(){ signupModal.style.display="flex"; loginModal.style.display="none"; }
+function closeSignup(){ signupModal.style.display="none"; loginModal.style.display="flex"; }
+
+function signupUser(){
+    const name=signupName.value, email=signupEmail.value, pass=signupPass.value;
+    if(!name||!email||!pass) return alert("Fill all fields.");
+
+    localStorage.setItem("user",JSON.stringify({name,email,pass}));
+    alert("Account created!");
+    signupModal.style.display="none";
+    loginModal.style.display="flex";
 }
 
-function showHome() {
-    document.getElementById("dashboard").style.display = "none";
-    document.getElementById("home").style.display = "block";
+function updateAuthUI(){
+    const role = localStorage.getItem("role");
+    const loggedIn = localStorage.getItem("loggedIn")==="true";
+
+    loginLink.style.display = loggedIn?"none":"inline-block";
+    logoutLink.style.display = loggedIn?"inline-block":"none";
+    adminLink.style.display = role==="admin"?"inline-block":"none";
+}
+
+function logoutUser(){
+    localStorage.clear();
+    loginModal.style.display="flex";
+}
+
+/* CHARITIES */
+let charities = JSON.parse(localStorage.getItem("charities")) || [
+    { name:"Global Water Aid", description:"Clean water projects", bg:"water" },
+    { name:"Hope for Children", description:"Education programs", bg:"children" },
+    { name:"Wildlife Rescue Fund", description:"Animal protection", bg:"wildlife" }
+];
+
+function saveCharities(){ localStorage.setItem("charities",JSON.stringify(charities)); }
+
+function getBGClass(type){
+    if(type==="water") return "bg-water";
+    if(type==="children") return "bg-children";
+    if(type==="wildlife") return "bg-wildlife";
+    return "bg-generic";
+}
+
+function loadCharities(){
+    charityGrid.innerHTML="";
+    charities.forEach(c=>{
+        charityGrid.innerHTML+=`
+        <div class="charity-card ${getBGClass(c.bg)}">
+            <h3>${c.name}</h3>
+            <p>${c.description}</p>
+            <button onclick="donate('${c.name}')">Donate</button>
+        </div>`;
+    });
+}
+loadCharities();
+
+/* DONATION FLOW */
+let currentCharity="";
+
+function donate(name){
+    currentCharity=name;
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    donorName.value=user?.name || "";
+    donorEmail.value=user?.email || "";
+
+    donateCharityName.innerText="Donate to "+name;
+    donationModal.style.display="flex";
+}
+
+function setApproxAmount(val){ donateAmount.value = val; }
+
+function openPayment(){
+    if(!donateAmount.value) return alert("Enter amount!");
+    donationModal.style.display="none";
+    paymentModal.style.display="flex";
+}
+
+function completePayment(){
+    const amount = donateAmount.value;
+    donationHistory.innerHTML+=`<li>${currentCharity} — $${amount}</li>`;
+    paymentModal.style.display="none";
+    alert("Donation recorded!");
+}
+
+/* SEARCH */
+function filterCharities(){
+    const q = searchInput.value.toLowerCase();
+    const filtered = charities.filter(c=>c.name.toLowerCase().includes(q));
+
+    charityGrid.innerHTML="";
+    filtered.forEach(c=>{
+        charityGrid.innerHTML+=`
+        <div class="charity-card ${getBGClass(c.bg)}">
+            <h3>${c.name}</h3>
+            <p>${c.description}</p>
+            <button onclick="donate('${c.name}')">Donate</button>
+        </div>`;
+    });
+}
+
+/* ADMIN */
+function loadAdminCharities(){
+    adminCharityList.innerHTML="";
+    charities.forEach((c,i)=>{
+        adminCharityList.innerHTML+=`
+        <div style="background:white;padding:10px;margin:10px 0;border-radius:6px;">
+            <strong>${c.name}</strong><br>${c.description}<br>
+            <button onclick="deleteCharity(${i})">Delete</button>
+        </div>`;
+    });
+}
+
+function addCharity(){
+    const name = newCharityName.value.trim();
+    const desc = newCharityDesc.value.trim();
+    if(!name || !desc) return alert("Fill all fields");
+
+    charities.push({name,description:desc,bg:"generic"});
+    saveCharities(); loadCharities(); loadAdminCharities();
+
+    newCharityName.value=""; 
+    newCharityDesc.value="";
+}
+
+function deleteCharity(i){
+    charities.splice(i,1);
+    saveCharities(); loadCharities(); loadAdminCharities();
+}
+
+/* PROFILE */
+function loadProfile(){
+    const user = JSON.parse(localStorage.getItem("user"));
+    if(!user) return;
+
+    profileName.value = user.name;
+    profileEmail.value = user.email;
+}
+
+function saveProfile(){
+    let user = JSON.parse(localStorage.getItem("user"));
+    user.name = profileName.value;
+    user.email = profileEmail.value;
+
+    if(profilePass.value.trim()) user.pass = profilePass.value;
+
+    localStorage.setItem("user",JSON.stringify(user));
+    alert("Profile updated!");
 }
 </script>
 
