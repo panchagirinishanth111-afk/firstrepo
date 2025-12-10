@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Restaurant Order Board</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4");
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+/* Add Order Window */
+.form-box {
+    width: 350px;
+    margin: 20px auto;
+    background: rgba(0,0,0,0.55);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(8px);
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    background-color: #00e676;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Order Board */
+.columns {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.column {
+    width: 220px;
+    background: rgba(0,0,0,0.55);
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    min-height: 220px;
+}
+
+.order {
+    background: rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+}
+
+/* Status Colors */
+.status-preparing { color: #ffeb3b; font-weight: bold; }
+.status-ready { color: #00e676; font-weight: bold; }
+.status-served { color: #4fc3f7; font-weight: bold; }
+
+/* Track Orders Section */
+.track-box {
+    width: 90%;
+    margin: 30px auto;
+    background: rgba(0,0,0,0.55);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(8px);
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍽 Restaurant Menu & Order Board</h1>
+
+<!-- ADD ORDER FORM -->
+<div class="form-box">
+    <h2>Add Order</h2>
+    <form id="orderForm">
+        <input id="customer" placeholder="Customer Name" required />
+        <input id="tableNo" placeholder="Table Number" required />
+        <input id="itemName" placeholder="Item Ordered" required />
+        <textarea id="notes" placeholder="Notes (optional)"></textarea>
+        <input id="timeNeeded" type="number" placeholder="Prep Time (min)" required />
+        <button type="submit">Add Order</button>
+    </form>
+</div>
+
+<!-- ORDER BOARD -->
+<div class="columns">
+    <div class="column" id="col-new"><h3>New</h3></div>
+    <div class="column" id="col-preparing"><h3>Preparing</h3></div>
+    <div class="column" id="col-ready"><h3>Ready</h3></div>
+    <div class="column" id="col-collected"><h3>Served</h3></div>
+</div>
+
+<!-- TRACK ORDERS -->
+<div class="track-box">
+    <h2>Track Orders</h2>
+
+    <select id="tableSelect" onchange="loadTableOrders()">
+        <option>Select Table</option>
+    </select>
+
+    <div id="trackResults" style="margin-top:15px;"></div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ---------------- FIREBASE CONFIG ---------------- */
+const firebaseConfig = {
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_DOMAIN",
+    projectId: "YOUR_PROJECT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ---------------- ADD ORDER ---------------- */
+let orderNo = 1;
+
+orderForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const num = String(orderNo).padStart(3, "0");
+    orderNo++;
+
+    const now = Date.now();
+    const finish = now + parseInt(timeNeeded.value) * 60000;
+
+    await db.collection("orders").add({
+        orderNo: num,
+        customer: customer.value,
+        tableNo: tableNo.value,
+        item: itemName.value,
+        notes: notes.value,
+        createdAt: now,
+        finishTime: finish,
+        status: "New"
+    });
+
+    e.target.reset();
+});
+
+/* ---------------- ORDER CARD HTML ---------------- */
+function renderCard(doc) {
+    const d = doc.data();
+    const now = Date.now();
+
+    let statusMsg = "";
+    let cssClass = "";
+
+    if (d.status === "Preparing") {
+        let remaining = Math.ceil((d.finishTime - now) / 60000);
+        remaining = Math.max(0, remaining);
+
+        statusMsg = `Preparing — ${remaining} min remaining`;
+        cssClass = "status-preparing";
+
+        if (remaining <= 0) {
+            db.collection("orders").doc(doc.id).update({ status: "Ready" });
+        }
+
+    } else if (d.status === "Ready") {
+        statusMsg = "Ready to Collect";
+        cssClass = "status-ready";
+
+    } else if (d.status === "Collected") {
+        statusMsg = "Served";
+        cssClass = "status-served";
+
+    } else {
+        statusMsg = "New Order";
+    }
+
+    return `
+        <div class="order">
+            <strong>#${d.orderNo} - ${d.item}</strong><br>
+            ${d.customer} (Table ${d.tableNo})<br>
+            <span class="${cssClass}">${statusMsg}</span>
+        </div>
+    `;
+}
+
+/* ---------------- LIVE ORDER BOARD ---------------- */
+db.collection("orders").orderBy("createdAt").onSnapshot((list) => {
+    col-new.innerHTML = "<h3>New</h3>";
+    col-preparing.innerHTML = "<h3>Preparing</h3>";
+    col-ready.innerHTML = "<h3>Ready</h3>";
+    col-collected.innerHTML = "<h3>Served</h3>";
+
+    const activeTables = new Set();
+
+    list.forEach((doc) => {
+        const d = doc.data();
+        const html = renderCard(doc);
+
+        if (d.status !== "Collected") {
+            activeTables.add(d.tableNo);
+        }
+
+        if (d.status === "New") col-new.innerHTML += html;
+        if (d.status === "Preparing") col-preparing.innerHTML += html;
+        if (d.status === "Ready") col-ready.innerHTML += html;
+        if (d.status === "Collected") col-collected.innerHTML += html;
+    });
+
+    /* Populate dropdown with active table numbers */
+    tableSelect.innerHTML = "<option>Select Table</option>";
+    activeTables.forEach((t) => {
+        tableSelect.innerHTML += `<option value="${t}">Table ${t}</option>`;
+    });
+});
+
+/* ---------------- TRACK ORDERS ---------------- */
+async function loadTableOrders() {
+    const t = tableSelect.value;
+    if (!t) {
+        trackResults.innerHTML = "";
+        return;
+    }
+
+    const q = await db.collection("orders")
+                      .where("tableNo", "==", t)
+                      .orderBy("createdAt")
+                      .get();
+
+    if (q.empty) {
+        trackResults.innerHTML = "No orders for this table.";
+        return;
+    }
+
+    let html = "";
+    q.forEach((doc) => (html += renderCard(doc)));
+
+    trackResults.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
